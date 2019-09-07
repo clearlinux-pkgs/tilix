@@ -1,0 +1,4 @@
+# This file contains pkgconfig build requirements that get picked up
+# but are undesirable. One entry per line, no whitespace.
+gtkd-3$DC_SUFFIX
+vted-3$DC_SUFFIX
