@@ -1,4 +1,4 @@
-From 66bac8031b5d95121d7e467a89a8961fb10ce8d3 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Eliasson <matthias.eliasson@gmail.com>
 Date: Wed, 29 May 2019 19:32:06 +0200
 Subject: [PATCH] Make tilix build with meson
@@ -15,14 +15,14 @@ Subject: [PATCH] Make tilix build with meson
 
 diff --git a/data/man/meson.build b/data/man/meson.build
 new file mode 100644
-index 00000000..1681e5cb
+index 0000000..1681e5c
 --- /dev/null
 +++ b/data/man/meson.build
 @@ -0,0 +1 @@
 +install_man('tilix')
 \ No newline at end of file
 diff --git a/data/meson.build b/data/meson.build
-index 4fdc6ea3..ab3242c7 100644
+index 4fdc6ea..ab3242c 100644
 --- a/data/meson.build
 +++ b/data/meson.build
 @@ -2,13 +2,23 @@
@@ -37,7 +37,7 @@ index 4fdc6ea3..ab3242c7 100644
 -    install_dir: join_paths(get_option('datadir'), 'icons/hicolor/scalable/apps')
 +    install_dir: iconsdir / 'symbolic' / 'apps'
  )
-
+ 
 +# Install the desktop file
 +desktop_file = i18n.merge_file(
 +    '@0@.desktop'.format(meson.project_name()),
@@ -48,7 +48,7 @@ index 4fdc6ea3..ab3242c7 100644
 +    install: true,
 +    install_dir: appdir
 +)
-
+ 
  # Validate desktop file
  desktop_file_validate = find_program('desktop-file-validate', required:false)
 @@ -16,18 +26,18 @@ if desktop_file_validate.found()
@@ -59,7 +59,7 @@ index 4fdc6ea3..ab3242c7 100644
 +    args: desktop_file.full_path()
    )
  endif
-
+ 
 -# Install the desktop file
 -i18n.merge_file(
 -    output: '@0@.desktop'.format(meson.project_name()),
@@ -76,7 +76,7 @@ index 4fdc6ea3..ab3242c7 100644
 -    install_dir: join_paths(get_option('datadir'), 'applications')
 +    install_dir: datadir / 'metainfo'
  )
-
+ 
  # Validate AppData file
 @@ -36,19 +46,10 @@ if appstream_util.found()
    test (
@@ -86,7 +86,7 @@ index 4fdc6ea3..ab3242c7 100644
 +    args: ['validate-relax', '--nonet', appdata_file.full_path()]
    )
  endif
-
+ 
 -# Install the AppData file
 -i18n.merge_file(
 -    output: '@0@.appdata.xml'.format(meson.project_name()),
@@ -106,14 +106,14 @@ index 4fdc6ea3..ab3242c7 100644
 -    install_dir: join_paths(get_option('datadir'), 'tilix/resources')
 +    install_dir: pkgdatadir / 'resources'
  )
-
+ 
  # Install GSchemas
  install_data(
    'gsettings/@0@.gschema.xml'.format(meson.project_name()),
 -  install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 +  install_dir: schemadir
  )
-
+ 
  # Color schemes
 @@ -77,28 +78,28 @@ install_data(
          'schemes/solarized-light.json',
@@ -122,26 +122,26 @@ index 4fdc6ea3..ab3242c7 100644
 -    install_dir: join_paths(get_option('datadir'), 'tilix/schemes')
 +    install_dir: pkgdatadir / 'schemes'
  )
-
+ 
  # Scripts
  install_data(
      'scripts/tilix_int.sh',
 -    install_dir: join_paths(get_option('datadir'), 'tilix/scripts')
 +    install_dir: pkgdatadir / 'scripts'
  )
-
+ 
  # Copying Nautilus extension
  install_data(
      'nautilus/open-tilix.py',
 -    install_dir: join_paths(get_option('datadir'), 'nautilus-python/extensions')
 +    install_dir: datadir / 'nautilus-python' / 'extensions'
  )
-
+ 
  # Copy D-Bus service descriptor
  conf = configuration_data()
 -conf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
 +conf.set('bindir', bindir)
-
+ 
  configure_file(
    input: 'dbus/@0@.service.in'.format(meson.project_name()),
 -  output: 'dbus/@0@.service'.format(meson.project_name()),
@@ -151,7 +151,7 @@ index 4fdc6ea3..ab3242c7 100644
 +  install_dir: datadir / 'dbus-1' / 'services'
  )
 diff --git a/meson.build b/meson.build
-index feff315a..0fcbe9cb 100644
+index feff315..0fcbe9c 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -1,8 +1,9 @@
@@ -164,12 +164,12 @@ index feff315a..0fcbe9cb 100644
 +    default_options: 'buildtype=debugoptimized',
 +    meson_version: '>= 0.50.0'
  )
-
+ 
  compiler = meson.get_compiler('d')
 @@ -24,84 +25,87 @@ endif
  gnome = import('gnome')
  i18n = import('i18n')
-
+ 
 +prefix = get_option('prefix')
 +bindir = prefix / get_option('bindir')
 +datadir = prefix / get_option('datadir')
@@ -290,10 +290,10 @@ index feff315a..0fcbe9cb 100644
 +    'source/x11/Xlib.d',
 +    'source/app.d'
  ]
-
+ 
  source_root = meson.source_root()
  sources_dir = include_directories('source/')
-
+ 
  # Dependencies
 -# Note relying on dub to fetch and build dependencies before running meson build is temporary due to a bug in Meson 0.48
 -# gtkd_dep = dependency('gtkd-3', version: '>= 3.8.5')
@@ -306,18 +306,18 @@ index feff315a..0fcbe9cb 100644
  xlib_dep = dependency('x11')
  libunwind_dep = dependency('libunwind')
 -msgfmt = find_program('msgfmt')
-
+ 
  subdir('po')
  subdir('data')
 @@ -130,4 +134,4 @@ executable('tilix',
  #)
  #test('tilix_test', tilix_test_exe)
-
+ 
 -meson.add_install_script('meson_post_install.py')
 \ No newline at end of file
 +meson.add_install_script('meson_post_install.py')
 diff --git a/meson_post_install.py b/meson_post_install.py
-index b5f7b3d7..1d4c91bb 100644
+index b5f7b3d..1d4c91b 100644
 --- a/meson_post_install.py
 +++ b/meson_post_install.py
 @@ -8,4 +8,6 @@ if not environ.get('DESTDIR', ''):
@@ -332,7 +332,7 @@ index b5f7b3d7..1d4c91bb 100644
 \ No newline at end of file
 diff --git a/po/LINGUAS b/po/LINGUAS
 new file mode 100644
-index 00000000..d569cef7
+index 0000000..d569cef
 --- /dev/null
 +++ b/po/LINGUAS
 @@ -0,0 +1,32 @@
@@ -369,5 +369,3 @@ index 00000000..d569cef7
 +zh_CN
 +zh_TW
 \ No newline at end of file
---
-2.21.0

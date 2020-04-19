@@ -4,12 +4,12 @@
 #
 Name     : tilix
 Version  : 1.9.3
-Release  : 5
+Release  : 6
 URL      : https://github.com/gnunn1/tilix/archive/1.9.3.tar.gz
 Source0  : https://github.com/gnunn1/tilix/archive/1.9.3.tar.gz
 Summary  : A tiling terminal emulator for Linux using GTK+ 3
 Group    : Development/Tools
-License  : GPL-3.0 MPL-2.0 MPL-2.0-no-copyleft-exception
+License  : CC-BY-SA-3.0 GPL-3.0 LGPL-3.0 MPL-2.0 MPL-2.0-no-copyleft-exception
 Requires: tilix-bin = %{version}-%{release}
 Requires: tilix-data = %{version}-%{release}
 Requires: tilix-license = %{version}-%{release}
@@ -24,13 +24,16 @@ BuildRequires : ldc
 BuildRequires : ldc-dev
 BuildRequires : pkgconfig(libunwind)
 BuildRequires : pkgconfig(x11)
-Patch1: 001-fix-meson-build.patch
+Patch1: 0001-Make-tilix-build-with-meson.patch
+Patch2: 0002-Avoid-calling-values-on-a-shared-object.patch
 
 %description
-[![Build Status](https://travis-ci.org/gnunn1/tilix.svg?branch=master)](https://travis-ci.org/gnunn1/tilix)
-[![Translation status](https://hosted.weblate.org/widgets/tilix/-/svg-badge.svg)](https://hosted.weblate.org/engage/tilix/?utm_source=widget)
-# Tilix
-A tiling terminal emulator for Linux using GTK+ 3. The Tilix web site for users is available at [https://gnunn1.github.io/tilix-web](https://gnunn1.github.io/tilix-web).
+Tilix is a tiling terminal emulator which uses the VTE GTK+ 3 widget. The
+application was written using GTK 3 and an effort was made to conform to GNOME
+Human Interface Guidelines (HIG). As a result, it does use CSD (i.e. the GTK
+HeaderBar) though it can be disabled if necessary. Other than GNOME, only Unity
+has been tested officially though users have had success with other desktop
+environments.
 
 %package bin
 Summary: bin components for the tilix package.
@@ -68,30 +71,32 @@ locales components for the tilix package.
 
 %prep
 %setup -q -n tilix-1.9.3
+cd %{_builddir}/tilix-1.9.3
 %patch1 -p1
+%patch2 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1567872962
-# -Werror is for werrorists
+export SOURCE_DATE_EPOCH=1587263924
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" meson --libdir=lib64 --prefix=/usr --buildtype=plain   builddir
 ninja -v -C builddir
 
 %install
 mkdir -p %{buildroot}/usr/share/package-licenses/tilix
-cp LICENSE %{buildroot}/usr/share/package-licenses/tilix/LICENSE
-cp source/x11/LICENSE %{buildroot}/usr/share/package-licenses/tilix/source_x11_LICENSE
+cp %{_builddir}/tilix-1.9.3/LICENSE %{buildroot}/usr/share/package-licenses/tilix/fa7c4d75bae3a641d1f9ab5df028175bfb8a69ca
+cp %{_builddir}/tilix-1.9.3/data/icons/LICENSE %{buildroot}/usr/share/package-licenses/tilix/2093ad79c06332b64811fed22135d71855d2e2a2
+cp %{_builddir}/tilix-1.9.3/source/x11/LICENSE %{buildroot}/usr/share/package-licenses/tilix/f98c7fffc3fe221e79fa19fe89c74e74c0da1266
 DESTDIR=%{buildroot} ninja -C builddir install
 %find_lang tilix
 
@@ -124,8 +129,9 @@ DESTDIR=%{buildroot} ninja -C builddir install
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/tilix/LICENSE
-/usr/share/package-licenses/tilix/source_x11_LICENSE
+/usr/share/package-licenses/tilix/2093ad79c06332b64811fed22135d71855d2e2a2
+/usr/share/package-licenses/tilix/f98c7fffc3fe221e79fa19fe89c74e74c0da1266
+/usr/share/package-licenses/tilix/fa7c4d75bae3a641d1f9ab5df028175bfb8a69ca
 
 %files locales -f tilix.lang
 %defattr(-,root,root,-)

@@ -1,0 +1,6 @@
+Tilix is a tiling terminal emulator which uses the VTE GTK+ 3 widget. The
+application was written using GTK 3 and an effort was made to conform to GNOME
+Human Interface Guidelines (HIG). As a result, it does use CSD (i.e. the GTK
+HeaderBar) though it can be disabled if necessary. Other than GNOME, only Unity
+has been tested officially though users have had success with other desktop
+environments.
