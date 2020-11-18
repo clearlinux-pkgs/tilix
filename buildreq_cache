@@ -1,4 +1,7 @@
 1.9.3
 appstream-glib
 desktop-file-utils
+pkgconfig(gtk+-3.0)
+pkgconfig(librsvg-2.0)
 pkgconfig(libunwind)
+pkgconfig(vte-2.91)
