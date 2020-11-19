@@ -4,7 +4,7 @@
 #
 Name     : tilix
 Version  : 1.9.3
-Release  : 8
+Release  : 9
 URL      : https://github.com/gnunn1/tilix/archive/1.9.3.tar.gz
 Source0  : https://github.com/gnunn1/tilix/archive/1.9.3.tar.gz
 Summary  : A tiling terminal emulator for Linux using GTK+ 3
@@ -16,6 +16,7 @@ Requires: tilix-license = %{version}-%{release}
 Requires: tilix-locales = %{version}-%{release}
 Requires: gtk3
 Requires: librsvg
+Requires: libsecret
 Requires: vte
 BuildRequires : GtkD-dev
 BuildRequires : appstream-glib
@@ -27,6 +28,7 @@ BuildRequires : gtk3
 BuildRequires : ldc
 BuildRequires : ldc-dev
 BuildRequires : librsvg
+BuildRequires : libsecret
 BuildRequires : pkgconfig(gtk+-3.0)
 BuildRequires : pkgconfig(librsvg-2.0)
 BuildRequires : pkgconfig(libunwind)
@@ -89,7 +91,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1605664171
+export SOURCE_DATE_EPOCH=1605807942
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
