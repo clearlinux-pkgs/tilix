@@ -4,7 +4,7 @@
 #
 Name     : tilix
 Version  : 1.9.4
-Release  : 11
+Release  : 12
 URL      : https://github.com/gnunn1/tilix/archive/1.9.4/tilix-1.9.4.tar.gz
 Source0  : https://github.com/gnunn1/tilix/archive/1.9.4/tilix-1.9.4.tar.gz
 Summary  : A tiling terminal emulator for Linux using GTK+ 3
